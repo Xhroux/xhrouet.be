@@ -1,0 +1,43 @@
+---
+// Layout for standalone Markdown/MDX pages under src/pages/
+import Base from './Base.astro';
+
+interface Props {
+  frontmatter: {
+    titre: string;
+    resume?: string;
+    section?: 'accueil' | 'domotique' | 'a-propos';
+    filAriane?: { label: string; href: string }[];
+  };
+}
+
+const { titre, resume, section, filAriane = [] } = Astro.props.frontmatter;
+---
+
+<Base title={titre} description={resume} section={section}>
+  <div class="page-head">
+    <div class="wrap">
+      {
+        filAriane.length > 0 && (
+          <nav class="breadcrumb" aria-label="Fil d'Ariane">
+            <ol>
+              {filAriane.map((f) => (
+                <li>
+                  <a href={f.href}>{f.label}</a>
+                </li>
+              ))}
+              <li aria-current="page">{titre}</li>
+            </ol>
+          </nav>
+        )
+      }
+      <h1>{titre}</h1>
+      {resume && <p class="lead">{resume}</p>}
+    </div>
+  </div>
+  <div class="wrap layout">
+    <article class="layout-main prose" style="max-width: 760px">
+      <slot />
+    </article>
+  </div>
+</Base>

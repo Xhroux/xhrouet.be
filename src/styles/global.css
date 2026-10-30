@@ -305,6 +305,33 @@ a.card:hover {
   border-style: dashed;
 }
 
+/* "Pour commencer" highlight */
+.start-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 28px 32px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  border: 1px solid transparent;
+  color: var(--ink);
+  text-decoration: none;
+}
+.start-box:hover {
+  border-color: var(--accent);
+  color: var(--ink);
+}
+.start-box .kicker {
+  margin: 0;
+  color: var(--accent-ink);
+}
+.start-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.2;
+}
+
 /* Tags */
 .tag {
   display: inline-block;

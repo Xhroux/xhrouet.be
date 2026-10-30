@@ -51,6 +51,10 @@ const voirAussi = (await getEntries(d.voirAussi)).filter((p) => p && hasPage(p))
     </article>
 
     <aside class="layout-side" aria-label="Informations complémentaires">
+      <section class="side-box">
+        <h2>Pour commencer</h2>
+        <p style="margin: 0"><a href="/domotique/pourquoi-home-assistant/">Pourquoi j'ai choisi Home Assistant →</a></p>
+      </section>
       {
         materiel.length > 0 && (
           <section class="side-box is-filled">
