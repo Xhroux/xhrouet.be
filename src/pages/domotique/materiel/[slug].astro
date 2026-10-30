@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import { hasPage, formatDate, getUsagesByMateriel } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const items = (await getCollection('materiel')).filter(hasPage);
+  return items.map((item) => ({ params: { slug: item.id }, props: { item } }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+const d = item.data;
+const usages = (await getUsagesByMateriel()).get(item.id) ?? [];
+const etoiles = d.note !== undefined ? '★'.repeat(Math.round(d.note)) + '☆'.repeat(5 - Math.round(d.note)) : null;
+---
+
+<Base title={d.titre} description={d.avis ?? `${d.marque} ${d.titre} : mon avis.`} section="domotique">
+  <div class="page-head">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="/domotique/">Domotique</a></li>
+          <li><a href="/domotique/materiel/">Matériel</a></li>
+          <li aria-current="page">{d.titre}</li>
+        </ol>
+      </nav>
+      {d.statut === 'brouillon' && <p class="draft-banner">Brouillon : cette fiche n'apparaîtra pas sur le site publié.</p>}
+      <div class="tags" style="margin-bottom: 14px">
+        <span class="tag tag-dark">{d.marque}</span>
+        {d.protocole.map((p) => <span class="tag">{p}</span>)}
+      </div>
+      <h1>{d.titre}</h1>
+      {d.avis && <p class="lead">{d.avis}</p>}
+      {d.miseAJour && <p class="page-meta">Mis à jour le {formatDate(d.miseAJour)}</p>}
+    </div>
+  </div>
+
+  <div class="wrap layout">
+    <article class="layout-main">
+      {
+        d.image && (
+          <figure class="hero-figure">
+            <Image src={d.image} alt={d.imageAlt ?? `${d.marque} ${d.titre}`} widths={[600, 1000]} sizes="(max-width: 800px) 100vw, 640px" />
+          </figure>
+        )
+      }
+      <div class="prose">
+        <Content />
+      </div>
+    </article>
+
+    <aside class="layout-side" aria-label="Informations sur le produit">
+      <section class="side-box is-filled">
+        <h2>En bref</h2>
+        <dl class="fact-list">
+          <dt>Marque</dt>
+          <dd>{d.marque}</dd>
+          {d.protocole.length > 0 && (<><dt>Protocole</dt><dd>{d.protocole.join(' / ')}</dd></>)}
+          {etoiles && (<><dt>Ma note</dt><dd><span aria-hidden="true">{etoiles}</span><span class="sr"> {d.note} sur 5</span></dd></>)}
+          {d.boutique && (<><dt>Acheté chez</dt><dd>{d.lien ? <a href={d.lien} rel={d.affiliation ? 'sponsored noopener' : 'noopener'}>{d.boutique}</a> : d.boutique}</dd></>)}
+          {d.prix && (<><dt>Prix payé</dt><dd>{d.prix}</dd></>)}
+          {d.dateAchat && (<><dt>Acheté le</dt><dd>{formatDate(d.dateAchat)}</dd></>)}
+        </dl>
+        {d.affiliation && <p class="disclosure">Lien affilié : si vous achetez via ce lien, je touche une petite commission, sans surcoût pour vous.</p>}
+      </section>
+      {
+        usages.length > 0 && (
+          <section class="side-box">
+            <h2>Utilisé dans</h2>
+            <ul class="side-list">
+              {usages.map((u) => (
+                <li>{u.url ? <a href={u.url}>{u.titre}</a> : <strong>{u.titre}</strong>}</li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>

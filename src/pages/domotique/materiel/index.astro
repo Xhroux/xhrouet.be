@@ -1,0 +1,74 @@
+---
+import Base from '../../../layouts/Base.astro';
+import GearCard from '../../../components/GearCard.astro';
+import { getMateriel, getUsagesByMateriel } from '../../../lib/content';
+
+const materiel = await getMateriel();
+const usagesByMateriel = await getUsagesByMateriel();
+
+// Filters built from the brands and protocols actually used
+const marques = [...new Set(materiel.map((m) => m.data.marque))].sort((a, b) => a.localeCompare(b, 'fr'));
+const protocoles = [...new Set(materiel.flatMap((m) => m.data.protocole))].sort((a, b) => a.localeCompare(b, 'fr'));
+const filtres = [...marques.map((v) => ({ type: 'marque', v })), ...protocoles.map((v) => ({ type: 'protocole', v }))];
+---
+
+<Base title="Matériel" description="Le matériel domotique que j'utilise : avis, où l'acheter et dans quelles automatisations il sert." section="domotique">
+  <div class="page-head">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="/domotique/">Domotique</a></li>
+          <li aria-current="page">Matériel</li>
+        </ol>
+      </nav>
+      <h1>Matériel</h1>
+      <p class="lead">Ce que j'ai acheté, ce que j'en pense, où je l'ai trouvé et dans quelles pages il sert.</p>
+    </div>
+  </div>
+
+  <section class="section wrap" aria-label="Liste du matériel">
+    {
+      materiel.length === 0 ? (
+        <p class="empty">Les premières fiches arrivent bientôt.</p>
+      ) : (
+        <>
+          {filtres.length > 1 && (
+            <div class="tags" role="group" aria-label="Filtrer le matériel" style="margin-bottom: 28px">
+              <button type="button" class="pill" aria-pressed="true" data-filtre="">
+                Tout
+              </button>
+              {filtres.map((f) => (
+                <button type="button" class="pill" aria-pressed="false" data-type={f.type} data-filtre={f.v.toLowerCase()}>
+                  {f.v}
+                </button>
+              ))}
+            </div>
+          )}
+          <div class="grid-wide" id="liste-materiel">
+            {materiel.map((m) => (
+              <GearCard item={m} usages={usagesByMateriel.get(m.id)} />
+            ))}
+          </div>
+        </>
+      )
+    }
+  </section>
+</Base>
+
+<script>
+  // Simple client-side filter by brand or protocol
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.pill[data-filtre]');
+  const cards = document.querySelectorAll<HTMLElement>('#liste-materiel .gear');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      const value = btn.dataset.filtre ?? '';
+      const type = btn.dataset.type;
+      cards.forEach((card) => {
+        const values = (type === 'marque' ? card.dataset.marque : card.dataset.protocole)?.split(' ') ?? [];
+        const match = type === 'marque' ? card.dataset.marque === value : values.includes(value);
+        card.hidden = value !== '' && !match;
+      });
+    });
+  });
+</script>

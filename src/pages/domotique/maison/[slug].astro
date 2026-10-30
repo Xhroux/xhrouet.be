@@ -1,0 +1,104 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, getEntries, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Automatisation from '../../../components/Automatisation.astro';
+import { hasPage, formatDate } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const pages = (await getCollection('maison')).filter(hasPage);
+  return pages.map((page) => ({ params: { slug: page.id }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+const d = page.data;
+
+const materiel = (await getEntries(d.materiel)).filter(Boolean);
+const voirAussi = (await getEntries(d.voirAussi)).filter((p) => p && hasPage(p));
+const nbAuto = (page.body?.match(/<Automatisation\b/g) ?? []).length;
+---
+
+<Base title={d.titre} description={d.resume} section="domotique">
+  <div class="page-head">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="/domotique/">Domotique</a></li>
+          <li><a href="/domotique/maison/">Ma maison</a></li>
+          <li aria-current="page">{d.titre}</li>
+        </ol>
+      </nav>
+      {d.statut === 'brouillon' && <p class="draft-banner">Brouillon : cette page n'apparaîtra pas sur le site publié.</p>}
+      <h1>{d.titre}</h1>
+      {d.resume && <p class="lead">{d.resume}</p>}
+      <p class="page-meta">
+        {d.miseAJour && <>Mis à jour le {formatDate(d.miseAJour)} · </>}
+        {nbAuto} automatisation{nbAuto > 1 ? 's' : ''}
+      </p>
+    </div>
+  </div>
+
+  <div class="wrap layout">
+    <article class="layout-main">
+      {
+        d.image && (
+          <figure class="hero-figure">
+            <Image src={d.image} alt={d.imageAlt ?? `Tableau de bord ${d.titre}`} widths={[700, 1100, 1400]} sizes="(max-width: 800px) 100vw, 760px" />
+            <figcaption>{d.imageAlt ?? `Mon tableau de bord ${d.titre} dans Home Assistant.`}</figcaption>
+          </figure>
+        )
+      }
+      <div class="prose">
+        <Content components={{ Automatisation }} />
+      </div>
+    </article>
+
+    <aside class="layout-side" aria-label="Informations complémentaires">
+      {
+        materiel.length > 0 && (
+          <section class="side-box is-filled">
+            <h2>Matériel utilisé</h2>
+            <ul class="side-list">
+              {materiel.map((m) => (
+                <li>
+                  {hasPage(m) ? <a href={`/domotique/materiel/${m.id}/`}>{m.data.titre}</a> : <strong>{m.data.titre}</strong>}
+                  <span>
+                    {m.data.marque}
+                    {m.data.protocole.length > 0 && ` · ${m.data.protocole.join(' / ')}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      {
+        d.integrations.length > 0 && (
+          <section class="side-box">
+            <h2>Intégrations</h2>
+            <div class="tags">
+              {d.integrations.map((i) => (
+                <span class="tag">{i}</span>
+              ))}
+            </div>
+          </section>
+        )
+      }
+      {
+        voirAussi.length > 0 && (
+          <section class="side-box">
+            <h2>Voir aussi</h2>
+            <ul class="side-list">
+              {voirAussi.map((p) => (
+                <li>
+                  <a href={`/domotique/maison/${p.id}/`}>{p.data.titre}</a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </aside>
+  </div>
+</Base>

@@ -1,0 +1,48 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { hasPage } from '../lib/content';
+
+interface Props {
+  item: CollectionEntry<'materiel'>;
+  /** Usages (Ma maison pages) where this hardware is used */
+  usages?: { titre: string; url: string | null }[];
+}
+
+const { item, usages = [] } = Astro.props;
+const { titre, marque, protocole, avis, boutique, prix, image, imageAlt, statut } = item.data;
+const url = hasPage(item) ? `/domotique/materiel/${item.id}/` : null;
+---
+
+<article class="gear" data-marque={marque.toLowerCase()} data-protocole={protocole.map((p) => p.toLowerCase()).join(' ')}>
+  <div class="gear-media">
+    {image ? <Image src={image} alt={imageAlt ?? titre} widths={[300, 600]} sizes="300px" /> : <span aria-hidden="true">{marque}</span>}
+  </div>
+  <div class="gear-body">
+    <div class="tags">
+      <span class="tag tag-dark">{marque}</span>
+      {protocole.map((p) => <span class="tag">{p}</span>)}
+    </div>
+    <h3>{url ? <a href={url}>{titre}</a> : titre}</h3>
+    {statut === 'a-venir' ? <p>Fiche bientôt disponible.</p> : avis && <p>{avis}</p>}
+    {
+      (usages.length > 0 || boutique) && (
+        <p>
+          {usages.length > 0 && (
+            <>
+              Utilisé dans :{' '}
+              {usages.map((u, i) => (
+                <>
+                  {i > 0 && ', '}
+                  {u.url ? <a href={u.url}>{u.titre}</a> : u.titre}
+                </>
+              ))}
+            </>
+          )}
+          {usages.length > 0 && boutique && ' · '}
+          {boutique && <>Acheté chez {boutique}{prix && `, ${prix}`}</>}
+        </p>
+      )
+    }
+  </div>
+</article>

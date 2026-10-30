@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import GearCard from '../../components/GearCard.astro';
+import { getMaison, getMateriel, getUsagesByMateriel, hasPage } from '../../lib/content';
+
+const maison = await getMaison();
+const materiel = await getMateriel();
+const usagesByMateriel = await getUsagesByMateriel();
+const apercuMateriel = materiel.slice(0, 6);
+
+const countAutomatisations = (body?: string) => (body?.match(/<Automatisation\b/g) ?? []).length;
+---
+
+<Base
+  title="Domotique"
+  description="Ma maison sous Home Assistant : automatisations par usage, matériel testé et avis."
+  section="domotique"
+>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Ma maison sous Home Assistant</p>
+      <h1>Mes automatisations, mon matériel, mes avis.</h1>
+      <p class="lead">
+        Chaque tableau de bord de ma maison devient une page : ce que j'automatise, avec quel matériel, et le code pour
+        le refaire chez vous.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#maison">
+          Explorer ma maison
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+        <a class="btn btn-ghost" href="/domotique/materiel/">Voir le matériel testé</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="maison" class="section wrap" aria-labelledby="maison-titre">
+    <p class="kicker">Par usage</p>
+    <h2 id="maison-titre">Ma maison</h2>
+    <p class="section-intro">
+      Une page par tableau de bord Home Assistant, avec les automatisations, le matériel utilisé et mes retours.
+    </p>
+    <div class="grid">
+      {
+        maison.map((p) => {
+          const n = countAutomatisations(p.body);
+          return hasPage(p) ? (
+            <a class="card" href={`/domotique/maison/${p.id}/`}>
+              <span class="card-title">{p.data.titre}</span>
+              <span class="card-meta">
+                {n} automatisation{n > 1 ? 's' : ''}
+                {p.data.statut === 'brouillon' && ' · brouillon'}
+              </span>
+              <span class="card-cta">Voir la page →</span>
+            </a>
+          ) : (
+            <div class="card is-soon">
+              <span class="card-title">{p.data.titre}</span>
+              <span class="card-meta">Bientôt</span>
+            </div>
+          );
+        })
+      }
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="materiel-titre">
+    <p class="kicker">Testé chez moi</p>
+    <div class="section-head">
+      <h2 id="materiel-titre">Matériel</h2>
+      <a href="/domotique/materiel/">Tout le matériel →</a>
+    </div>
+    <p class="section-intro">Ce que j'ai acheté, ce que j'en pense, où je l'ai trouvé et dans quelles pages il sert.</p>
+    {
+      apercuMateriel.length === 0 ? (
+        <p class="empty">Les premières fiches arrivent bientôt.</p>
+      ) : (
+        <div class="grid-wide">
+          {apercuMateriel.map((m) => (
+            <GearCard item={m} usages={usagesByMateriel.get(m.id)} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Base>

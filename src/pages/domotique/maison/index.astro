@@ -1,0 +1,41 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getMaison, hasPage } from '../../../lib/content';
+
+const maison = await getMaison();
+---
+
+<Base title="Ma maison" description="Mes tableaux de bord Home Assistant, un par usage, avec leurs automatisations." section="domotique">
+  <div class="page-head">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Fil d'Ariane">
+        <ol>
+          <li><a href="/domotique/">Domotique</a></li>
+          <li aria-current="page">Ma maison</li>
+        </ol>
+      </nav>
+      <h1>Ma maison</h1>
+      <p class="lead">Une page par tableau de bord Home Assistant, avec les automatisations, le matériel utilisé et mes retours.</p>
+    </div>
+  </div>
+  <section class="section wrap" aria-label="Pages par usage">
+    <div class="grid">
+      {
+        maison.map((p) =>
+          hasPage(p) ? (
+            <a class="card" href={`/domotique/maison/${p.id}/`}>
+              <span class="card-title">{p.data.titre}</span>
+              {p.data.resume && <span>{p.data.resume}</span>}
+              <span class="card-cta">Voir la page →</span>
+            </a>
+          ) : (
+            <div class="card is-soon">
+              <span class="card-title">{p.data.titre}</span>
+              <span class="card-meta">Bientôt</span>
+            </div>
+          ),
+        )
+      }
+    </div>
+  </section>
+</Base>

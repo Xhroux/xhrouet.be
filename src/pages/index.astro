@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import { themes } from '../data/themes';
+import { getDernieresMisesAJour, formatDate } from '../lib/content';
+
+const dernieres = await getDernieresMisesAJour(6);
+---
+
+<Base title="Xh-périences" section="accueil">
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Carnet d'expériences</p>
+      <h1>Partager ce que j'ai testé, raté et réussi.</h1>
+      <p class="lead">
+        Des procédures claires et des retours honnêtes, pour vous éviter de chercher aussi longtemps que moi.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/domotique/">
+          Commencer par la domotique
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </a>
+        <a class="btn btn-ghost" href="/a-propos/">Qui suis-je ?</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="themes-titre">
+    <p class="kicker">Thèmes</p>
+    <h2 id="themes-titre">De quoi je parle</h2>
+    <p class="section-intro">Un thème par grand sujet. D'autres viendront s'ajouter avec le temps.</p>
+    <div class="grid-wide">
+      {
+        themes.map((t) =>
+          t.actif ? (
+            <a class="card" href={`/${t.slug}/`}>
+              <span class="card-title">{t.titre}</span>
+              <span>{t.description}</span>
+              <span class="card-cta">Voir le thème →</span>
+            </a>
+          ) : (
+            <div class="card is-soon">
+              <span class="card-title">{t.titre}</span>
+              <span>{t.description}</span>
+              <span class="card-meta">Bientôt</span>
+            </div>
+          ),
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="maj-titre">
+    <p class="kicker">Journal</p>
+    <h2 id="maj-titre">Dernières mises à jour</h2>
+    <p class="section-intro">Les pages ajoutées ou complétées récemment.</p>
+    {
+      dernieres.length === 0 ? (
+        <p class="empty">Les premières pages arrivent bientôt.</p>
+      ) : (
+        <div class="grid-wide">
+          {dernieres.map((d) => (
+            <a class="card" href={d.url}>
+              <span class="card-meta">{d.type}</span>
+              <span class="card-title">{d.titre}</span>
+              {d.date && <span class="card-meta">Mis à jour le {formatDate(d.date)}</span>}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Base>

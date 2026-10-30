@@ -1,0 +1,73 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Top-level section, used to highlight the menu entry */
+  section?: 'accueil' | 'domotique' | 'a-propos';
+}
+
+const { title, description = 'Mes expériences partagées : domotique, Home Assistant, matériel testé et retours honnêtes.', section } = Astro.props;
+const fullTitle = title === 'Xh-périences' ? title : `${title} · Xh-périences`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const nav = [
+  { href: '/', label: 'Accueil', key: 'accueil' },
+  { href: '/domotique/', label: 'Domotique', key: 'domotique' },
+  { href: '/a-propos/', label: 'À propos', key: 'a-propos' },
+];
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="fr_BE" />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true">Xh</span>
+          <span class="brand-name">Xh-périences</span>
+        </a>
+        <nav class="main-nav" aria-label="Navigation principale">
+          {
+            nav.map((item) => (
+              <a href={item.href} aria-current={section === item.key ? 'page' : undefined}>
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </header>
+
+    <main id="contenu">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div>
+          <p class="footer-brand">Xh-périences</p>
+          <p>Une question, une remarque ? <a href="mailto:contact@xhrouet.be">contact@xhrouet.be</a></p>
+        </div>
+        <p class="footer-legal">© {year} Alain Xhrouet · xhrouet.be</p>
+      </div>
+    </footer>
+  </body>
+</html>
