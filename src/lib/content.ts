@@ -17,9 +17,9 @@ export function isListed(entry: Entry): boolean {
 }
 
 export async function getMaison() {
+  // "Ma maison" pages: drafts are listed too, shown online as "Bientôt"
   const all = await getCollection('maison');
   return all
-    .filter(isListed)
     .sort((a, b) => a.data.ordre - b.data.ordre || a.data.titre.localeCompare(b.data.titre, 'fr'));
 }
 
