@@ -16,7 +16,6 @@ const d = page.data;
 
 const materiel = (await getEntries(d.materiel)).filter(Boolean);
 const voirAussi = (await getEntries(d.voirAussi)).filter((p) => p && hasPage(p));
-const nbAuto = (page.body?.match(/<Automatisation\b/g) ?? []).length;
 ---
 
 <Base title={d.titre} description={d.resume} section="domotique">
@@ -32,10 +31,7 @@ const nbAuto = (page.body?.match(/<Automatisation\b/g) ?? []).length;
       {d.statut === 'brouillon' && <p class="draft-banner">Brouillon : cette page n'apparaîtra pas sur le site publié.</p>}
       <h1>{d.titre}</h1>
       {d.resume && <p class="lead">{d.resume}</p>}
-      <p class="page-meta">
-        {d.miseAJour && <>Mis à jour le {formatDate(d.miseAJour)} · </>}
-        {nbAuto} automatisation{nbAuto > 1 ? 's' : ''}
-      </p>
+      {d.miseAJour && <p class="page-meta">Mis à jour le {formatDate(d.miseAJour)}</p>}
     </div>
   </div>
 

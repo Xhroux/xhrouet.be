@@ -12,7 +12,7 @@ const protocoles = [...new Set(materiel.flatMap((m) => m.data.protocole))].sort(
 const filtres = [...marques.map((v) => ({ type: 'marque', v })), ...protocoles.map((v) => ({ type: 'protocole', v }))];
 ---
 
-<Base title="Matériel" description="Le matériel domotique que j'utilise : avis, où l'acheter et dans quelles automatisations il sert." section="domotique">
+<Base title="Matériel" description="Le matériel domotique que j'utilise : avis, où l'acheter et dans quelles pages il sert." section="domotique">
   <div class="page-head">
     <div class="wrap">
       <nav class="breadcrumb" aria-label="Fil d'Ariane">

@@ -1,5 +1,4 @@
 ---
-# --- Page MODÈLE : remplace tout ce qui est entre crochets ---
 titre: Chauffage
 resume: "Gestion des vannes des radiateurs"
 ordre: 10
@@ -8,49 +7,27 @@ statut: publie
 miseAJour: 2026-10-30
 # image: ./images/chauffage-dashboard.png
 # imageAlt: Mon tableau de bord Chauffage dans Home Assistant
-materiel:
-  - exemple-produit
-integrations:
-  - "[Intégration 1]"
-  - "[Intégration 2]"
+# Matériel utilisé : noms des fiches matériel, sans .mdx (ex. - sonoff-trvzb)
+materiel: []
+# Intégrations Home Assistant utilisées (ex. - Zigbee2MQTT)
+integrations: []
 voirAussi:
   - climatisation
 ---
 
-## Le contexte
+## Ma situation
 
-[Chauffage au sol, chaudière mazout De Dietrich, radiateurs dans les chambres et SDB]
+Chauffage au sol, chaudière mazout De Dietrich, radiateurs dans les chambres et SDB
 
-## Les automatisations
+{/*
+  Intertitres suggérés : sors ceux que tu veux garder de ce bloc de commentaire,
+  change-les ou supprime-les. Tout ce qui est entre ces marques n'apparaît pas sur le site.
 
-<Automatisation
-  nom="[Nom de l'automatisation]"
-  quand="[Déclencheur, ex. : à 6 h en semaine]"
-  si="[Condition, ex. : quelqu'un est à la maison]"
-  alors="[Action, ex. : chauffer le salon à 20 °C]"
->
+## Ce que j'ai mis en place
 
-```yaml
-alias: "[Nom de l'automatisation]"
-triggers:
-  - trigger: time
-    at: "06:00:00"
-conditions:
-  - condition: state
-    entity_id: "[zone.home ou person.xxx]"
-    state: "[...]"
-actions:
-  - action: climate.set_temperature
-    target:
-      entity_id: "[climate.salon]"
-    data:
-      temperature: 20
-```
+## Ce qui marche
 
-[Pourquoi je l'ai faite comme ça, pièges rencontrés.]
+## Les limites
 
-</Automatisation>
-
-## Ce que j'en retiens
-
-[Ce qui marche bien, ce que je changerais, les prochaines améliorations.]
+## Ce que je ferais autrement
+*/}

@@ -11,7 +11,7 @@ export const themes: Theme[] = [
     slug: 'domotique',
     titre: 'Domotique',
     description:
-      'Ma maison sous Home Assistant : mes automatisations par usage, le matériel que j’ai acheté et ce que j’en pense.',
+      'Ma maison sous Home Assistant : mes retours d’expérience par usage, le matériel que j’ai acheté et ce que j’en pense.',
     actif: true,
   },
 ];

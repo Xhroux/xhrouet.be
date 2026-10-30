@@ -7,22 +7,20 @@ const maison = await getMaison();
 const materiel = await getMateriel();
 const usagesByMateriel = await getUsagesByMateriel();
 const apercuMateriel = materiel.slice(0, 6);
-
-const countAutomatisations = (body?: string) => (body?.match(/<Automatisation\b/g) ?? []).length;
 ---
 
 <Base
   title="Domotique"
-  description="Ma maison sous Home Assistant : automatisations par usage, matériel testé et avis."
+  description="Ma maison sous Home Assistant : retours d'expérience par usage, matériel testé et avis."
   section="domotique"
 >
   <section class="hero">
     <div class="wrap">
       <p class="eyebrow">Ma maison sous Home Assistant</p>
-      <h1>Mes automatisations, mon matériel, mes avis.</h1>
+      <h1>Ma maison connectée, mon matériel, mes avis.</h1>
       <p class="lead">
-        Chaque tableau de bord de ma maison devient une page : ce que j'automatise, avec quel matériel, et le code pour
-        le refaire chez vous.
+        Chaque tableau de bord de ma maison devient une page : comment je m'y suis pris, avec quel matériel, ce qui
+        marche et ce qui coince.
       </p>
       <div class="actions">
         <a class="btn btn-primary" href="#maison">
@@ -38,19 +36,16 @@ const countAutomatisations = (body?: string) => (body?.match(/<Automatisation\b/
     <p class="kicker">Par usage</p>
     <h2 id="maison-titre">Ma maison</h2>
     <p class="section-intro">
-      Une page par tableau de bord Home Assistant, avec les automatisations, le matériel utilisé et mes retours.
+      Une page par tableau de bord Home Assistant : comment je l'ai mis en place, le matériel utilisé, ce qui marche et les limites.
     </p>
     <div class="grid">
       {
-        maison.map((p) => {
-          const n = countAutomatisations(p.body);
-          return hasPage(p) ? (
+        maison.map((p) =>
+          hasPage(p) ? (
             <a class="card" href={`/domotique/maison/${p.id}/`}>
               <span class="card-title">{p.data.titre}</span>
-              <span class="card-meta">
-                {n} automatisation{n > 1 ? 's' : ''}
-                {p.data.statut === 'brouillon' && ' · brouillon'}
-              </span>
+              {p.data.resume && <span class="card-meta">{p.data.resume}</span>}
+              {p.data.statut === 'brouillon' && <span class="card-meta">Brouillon</span>}
               <span class="card-cta">Voir la page →</span>
             </a>
           ) : (
@@ -58,8 +53,8 @@ const countAutomatisations = (body?: string) => (body?.match(/<Automatisation\b/
               <span class="card-title">{p.data.titre}</span>
               <span class="card-meta">Bientôt</span>
             </div>
-          );
-        })
+          ),
+        )
       }
     </div>
   </section>

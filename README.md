@@ -32,9 +32,11 @@ Dans l'en-tête de chaque fichier (`statut:`) :
 
 ## Ajouter une page « Ma maison »
 
-1. Partir de `src/content/domotique/maison/chauffage.mdx` (le modèle).
+1. Partir de `src/content/domotique/maison/chauffage.mdx` (exemple).
 2. Remplir l'en-tête : `titre`, `resume`, `materiel` (noms des fiches matériel, sans `.mdx`), `integrations`, `voirAussi`.
-3. Chaque automatisation s'écrit avec le bloc `<Automatisation>` : le résumé Quand / Si / Alors, puis le YAML.
+3. Écrire le texte librement en Markdown (`## Intertitre`, `**gras**`, `- liste`).
+   Ce qui est entre `{/*` et `*/}` est un commentaire, invisible sur le site.
+   Option : pour montrer une automatisation précise, le bloc `<Automatisation nom="" quand="" si="" alors="">` existe toujours.
 4. Images : les mettre dans un dossier `images/` à côté du fichier et les référencer avec `image: ./images/mon-image.png`.
 
 ## Ajouter une fiche matériel
